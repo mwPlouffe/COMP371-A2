@@ -92,7 +92,7 @@ void main()
 	}
 	else
 	{
-		colour = vec4( ((diffuse + ambient + specular) * colour_vertex), 1.0);
+		colour = vec4(((diffuse + ambient) * colour_vertex), 1.0) + vec4(specular,1.0);
 	}
 	
 }

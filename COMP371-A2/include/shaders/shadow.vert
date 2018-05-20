@@ -14,7 +14,7 @@ out vec3 colour_vertex;
 void main()
 {
 	gl_Position		= projection_matrix * view_matrix * model_matrix * vec4(position, 1.0);
-	normal_vertex	= mat3 (transpose (inverse (model_matrix))) * normal;
+	normal_vertex	= normalize (mat3 (transpose (inverse (model_matrix))) * normal);
 	position_vertex = vec3 (model_matrix * vec4(position, 1.0f));
 	colour_vertex	= colour;
 	

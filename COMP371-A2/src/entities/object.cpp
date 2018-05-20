@@ -71,7 +71,13 @@ std::vector<GLfloat> Object::colourList(void)
 //populates the ibo data
 void Object::init()
 {
-	pointIndex();
+	if (normals.size() == 0)
+	{
+		generateFlatNormals();
+		averageNormals();
+		return;
+	}
+	std::cout << "\tWARNING: Object::init : Normals already exist for this object, init will not overwrite them." << std::endl;
 }
 std::vector<GLfloat> Object::normalList(void)
 {
@@ -85,6 +91,7 @@ void Object::generateFlatNormals(void)
 {
 	if (normals.size() > 0)
 	{
+		std::cout << "\tWARNING: Object::generateFlatNormals will not overwrite existing normals. Normals exist for the current object" << std::endl;
 		return;
 	}
 	for (int i = 0; i < indices.size(); i+=3)
@@ -113,21 +120,11 @@ void Object::generateFlatNormals(void)
 		normals.push_back(norm.z);
 	}
 }
-void Object::generateGouraudNormals(void)
-{
-	
-}
-void Object::generatePhongNormals(void)
-{
-	
-}
-
-//interface with the OBJparser
+//interface with the objloader
 Object::Object(const char* filepath)
 {
 	//TODO implement the colours and whatnot for the object!
-		loadOBJ(filepath, vertices, indices);
-		generateFlatNormals();
+		loadOBJ(filepath, vertices, indices, normals);
 }
 void Object::uniformColour(void)
 {
@@ -138,3 +135,15 @@ void Object::uniformColour(void)
 		colours.push_back(1.0f);
 	}
 }
+void Object::averageNormals(void)
+{
+	//generate a poorly named "mesh" to generate the vertex normals
+	Mesh *m = new Mesh(vertices, indices, normals);
+	this->normals = m->average_normals();
+}
+
+
+
+
+
+

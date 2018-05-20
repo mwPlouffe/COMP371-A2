@@ -10,9 +10,9 @@
 
 Light::Light(void)
 {
-	ambientLight  = 0.5f;		//0.5
-	diffuseLight  =	0.1f;		//0.1
-	specularLight = 0.0f;
+	ambientLight  = 0.3f;		//0.5
+	diffuseLight  =	0.3f;		//0.1
+	specularLight = 0.1f;
 	colourLight	  = glm::vec3(1.0,1.0,1.0); //white
 }
 Light::Light(float ambient, float diffuse, float specular, glm::vec3 colour)

@@ -8,76 +8,64 @@
 
 
 #include "mesh.h"
-Mesh::Edge::Edge(Vertex *v)
+Mesh::Vertex::Vertex(void)
 {
-	this->curr = v;
-}
-Mesh::Edge::Edge(Vertex *v, Edge *prev, Edge *next)
-{
-	this->curr= v;
-	this->prev = prev;
-	this->next = next;
+	//ensure the normal is zeroed out (additive identity)
+	normal = glm::vec3(0.0f);
 }
 Mesh::Mesh(void)
 {
 	//intentionally left empty
 }
-Mesh::Mesh(std::vector<GLfloat> vertexList, std::vector<GLuint> indices)
+Mesh::Mesh(std::vector<GLfloat> vertexList, std::vector<GLuint> indices, std::vector<GLfloat> flatNormals)
 {
-	init(vertexList,indices);
+	//must have the flat normals for this to work correctly
+	init(vertexList,indices, flatNormals);
 }
-std::vector<GLfloat> Mesh::gouraudNormals(void)
+void Mesh::init(std::vector<GLfloat> vertexList, std::vector<GLuint> indices, std::vector<GLfloat> flatNormals)
 {
-	return (std::vector<GLfloat>) NULL;
-}
-
-//https://people.cs.clemson.edu/~dhouse/courses/405/papers/winged-edge.pdf
-//implementation of the winged-edge ADT for
-void Mesh::init(std::vector<GLfloat> vertexList, std::vector<GLuint> indices)
-{
-	//generate all of the vertices for the mesh, with appropriate indexing
+	//generate all of the vertices for the mesh
 	for (int i = 0; i < vertexList.size(); i+=3)
 	{
-		Vertex *v;
+		Vertex *v = new Vertex();
 		v->position = glm::vec3(vertexList[i], vertexList[i + 1], vertexList[i + 2]);
 		vertices.push_back(v);
 		//index is divided by 3 since each vec3 requires 3 values
 	}
-	
-	//generate the edges as dictated by the indices std::vector
-	//indices directly correspond to the position of a vertex in the std::vector
+	//place all the vertices inside a face (the faces are triangles, so it is done in groups of 3)
 	for (int i = 0; i < indices.size(); i+=3)
 	{
-		//create the edges of the triangle
-		Edge *e1;
-		Edge *e2;
-		Edge *e3;
 		
-		//create a new face container
-		Face *f = new Face();;
-		
-		//link the edges together (generating a new edge object for the pointer
-		e1 = new Edge(vertices[indices[i	]], e3, e2);
-		e2 = new Edge(vertices[indices[i + 1]], e1, e3);
-		e3 = new Edge(vertices[indices[i + 2]], e2, e1);
-		
-		//generate the symmetric edge for each edge
-		
-		//link the vertices to their edges
-		vertices[indices[i	  ]] ->e = e1;
-		vertices[indices[i + 1]] ->e = e2;
-		vertices[indices[i + 2]] ->e = e3;
-		
-		//create the face container and store it by value
-		f->e = e1;
+		Face *f = new Face();
+		//add the vertices by the index referred to by the indices std::vector
+		f->a = vertices[indices[i	 ]];
+		f->b = vertices[indices[i + 1]];
+		f->c = vertices[indices[i + 2]];
+		//each vertex was given the face normal originally, copy that into the face
+		f->fnorm = glm::vec3(flatNormals[indices[i	  ]],
+							 flatNormals[indices[i + 1]],
+							 flatNormals[indices[i + 2]]);
 		faces.push_back(f);
-		
-		//store the edges by value
-		edges.push_back(e1);
-		edges.push_back(e1);
-		edges.push_back(e1);
 	}
-	//the mesh should be complete at this point, allowing for constant access to
 	
+	//if a vertex appears several times, simply add the old and new normals together
+	//the vertices start with the additive identity in them
+	for (int i = 0; i < faces.size(); i++)
+	{
+		faces[i]->a->normal += faces[i]->fnorm;
+		faces[i]->b->normal += faces[i]->fnorm;
+		faces[i]->c->normal += faces[i]->fnorm;
+	}
 	
+	//now output the correct normals to a std::vector
+	//the normals are now on a per-vertex basis, and they should be outputted that way
+	
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		normals.push_back( vertices[ i ]->normal.x );
+		normals.push_back( vertices[ i ]->normal.y );
+		normals.push_back( vertices[ i ]->normal.z );
+	}
+	
+	//we now have our average vertex normals
 }

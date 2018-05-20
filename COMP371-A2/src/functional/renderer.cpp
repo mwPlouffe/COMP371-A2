@@ -95,7 +95,7 @@ GLuint Renderer::bindSquare(void)
 		1.0f, 0.0f, 1.0f,
 	};
 	Object *ret = new Object(vertices, indices, colours);
-	ret->generateFlatNormals();
+	ret->init();
 	bind(ret, GL_STATIC_DRAW);
 	
 	return ret->vao;
@@ -153,7 +153,7 @@ GLuint Renderer::bindCube(void)
 		1.0f, 0.0f, 1.0f,
 	};
 	Object *ret = new Object(vertices, indices, colours);
-	ret->generateFlatNormals();
+	ret->init();
 	bind(ret, GL_STATIC_DRAW);
 	std::cout << "MESSAGE: Renderer::bindCube Successful" << std::endl;
 	return ret->vao;
@@ -184,7 +184,7 @@ GLuint Renderer::bindAxis(void)
 	};
 	
 	Object *ret = new Object(vertices, indices, colours);
-	ret->generateFlatNormals();
+	ret->init();
 	bind(ret, GL_STATIC_DRAW);
 	std::cout << "MESSAGE: Renderer::bindAxis Successful\n\tYellow = +y-axis\n\tGreen  = +x-axis" << std::endl;
 	return ret->vao;

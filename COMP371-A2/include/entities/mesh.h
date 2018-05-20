@@ -26,33 +26,31 @@ class Mesh
 	struct Face;
 	struct Vertex;
 	
-	struct Edge
-	{
-		Vertex *curr;
-		Face *f;
-		Edge* prev, *next;
-		Edge* symmetric;
-		Edge(Vertex *v);
-		Edge(Vertex *v, Edge *prev, Edge *next);
-	};
 	struct Vertex
 	{
-		Edge *e;
 		glm::vec3 position;
+		glm::vec3 normal;
+		Vertex(void);
 	};
 	struct Face
 	{
-		Edge *e;
+		Vertex *a;
+		Vertex *b;
+		Vertex *c;
+		glm::vec3 fnorm;
 	};
 	
-	std::vector<Edge*> edges;
 	std::vector<Vertex*> vertices;
 	std::vector<Face*> faces;
-	void init(std::vector<GLfloat> vertexList, std::vector<GLuint> indices);
+	std::vector<GLfloat> normals;
+	void init(std::vector<GLfloat> vertexList, std::vector<GLuint> indices, std::vector<GLfloat> normalList);
 	public:
 		Mesh(void);
-		Mesh(std::vector<GLfloat> vertexList, std::vector<GLuint> indices);
-		std::vector<GLfloat> gouraudNormals(void);
+		Mesh(std::vector<GLfloat> vertexList, std::vector<GLuint> indices, std::vector<GLfloat> normalList);
+		inline std::vector<GLfloat> average_normals(void)
+		{
+				return normals;
+		}
 	
 		
 };

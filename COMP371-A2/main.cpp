@@ -12,10 +12,10 @@ int main(void)
 {
 	Window *window			= new Window("COMP371: Assignment 2: 27532733", 800, 800);
 	ShaderProgram *ambient	= new ShaderProgram("./include/shaders/shadow.vert", "./include/shaders/shadow.frag");
-	Camera *camera			= new Camera (glm::vec3(0.0f,0.0f,-5.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	Camera *camera			= new Camera (glm::vec3(0.0f,0.0f,-25.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	Renderer *renderer;
 	PointLight *light = new PointLight();
-	Object *teddy;
+	Object *test;
 
 	
 	
@@ -34,8 +34,12 @@ int main(void)
 		camera->init(ambient->program());
 		
 		light->init(ambient->program());
-		teddy = new Object("./include/objectfiles/teddy.obj");		//loads from file, could be improperly specified
-		teddy->uniformColour();
+		
+		test = new Object("./include/objectfiles/teapot.obj");
+		//test->pointIndex();
+		test->uniformColour();
+		test->init();
+		
 	}
 	catch(GLFWException &ex)
 	{
@@ -47,21 +51,18 @@ int main(void)
 		std::cout << "ERROR: " << ex.what() << std::endl;
 		//return -1;
 	}
-	//GLuint cube = renderer->bindCube();
-	//GLuint axis = renderer->bindAxis();
-	
 	renderer->bind(light, GL_STATIC_DRAW);
-	renderer->bind(teddy, GL_STATIC_DRAW);
+	glPointSize(24);
+	renderer->bind(test, GL_STATIC_DRAW);
+	GLuint vao = renderer->bindCube();
 	while (! window->closed())
 	{
 		renderer->clear();
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-		//renderer->drawElements(cube, GL_TRIANGLES, 36);
-		glLineWidth(36);
-		glPointSize(24);
-		//renderer->drawElements(axis, GL_LINES, 6);
+		
 		renderer->drawElements(light->vao, GL_POINTS, light->indexSize());
-		renderer->drawElements(teddy->vao, GL_TRIANGLES, teddy->indexSize());
+		renderer->drawElements(test->vao, GL_TRIANGLES, test->indexSize());
+		renderer->drawElements(vao, GL_TRIANGLES, 48);
 		renderer->transformModelMatrix( camera->updateModel(window->keyPressed) );
 		camera->broadcast();
 		light->broadcast();

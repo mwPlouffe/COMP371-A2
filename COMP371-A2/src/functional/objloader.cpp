@@ -6,7 +6,7 @@
 
 #pragma warning(disable:4996)
 
-bool loadOBJ(const char * path, std::vector<GLfloat> & out_vertices, std::vector<GLuint> & out_indices)
+bool loadOBJ(const char * path, std::vector<GLfloat> &out_vertices, std::vector<GLuint> &out_indices, std::vector<GLfloat> &out_normals)
 {
 	printf("\tMESSAGE: Loading OBJ file %s...\n", path);
 
@@ -16,7 +16,6 @@ bool loadOBJ(const char * path, std::vector<GLfloat> & out_vertices, std::vector
 	{
 		throw GLIOException("File not found at the specified path");
 	}
-
 	while(true)
 	{
 
@@ -32,7 +31,12 @@ bool loadOBJ(const char * path, std::vector<GLfloat> & out_vertices, std::vector
 		{
 			glm::vec3 vertex;
 
-			fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z );
+			int matches = fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z );
+			
+			if (matches != 3)
+			{
+				throw GLIOException("ERROR: Malformed File. Exiting");
+			}
 
 			out_vertices.push_back(vertex.x);
 			out_vertices.push_back(vertex.y);
@@ -48,14 +52,30 @@ bool loadOBJ(const char * path, std::vector<GLfloat> & out_vertices, std::vector
 
 			if (matches != 3)
 			{
-				
-				return false;
+				throw GLIOException("ERROR: Malformed File. Exiting");
 			}
 
 			out_indices.push_back(idx1 - 1); //why -1? hint: look at the first index in teddy.obj
 			out_indices.push_back(idx2 - 1);
 			out_indices.push_back(idx3 - 1);
 
+		}
+		else if ( strcmp( lineHeader, "vn" ) == 0 )
+		{
+			
+			GLfloat idx1, idx2, idx3; //3 normals per line
+			
+			int matches = fscanf(file, "%f %f %f\n", &idx1, &idx2, &idx3);
+			
+			if (matches != 3)
+			{
+				throw GLIOException("ERROR: Malformed File. Exiting");
+			}
+			
+			out_normals.push_back(idx1 );
+			out_normals.push_back(idx2 );
+			out_normals.push_back(idx3 );
+			
 		}
 		else
 		{

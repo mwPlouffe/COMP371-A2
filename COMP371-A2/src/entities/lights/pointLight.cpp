@@ -17,7 +17,7 @@ Object({0.5f, 50.0f, 0.5f}, {0}, {colourLight.r, colourLight.g, colourLight.b})
 	//location where constants were taken from
 	//provides 0% light at 3250 units
 	position = glm::vec4(0.5f, 50.0f, 0.5f, 0.0f);			//this is a point
-	generateFlatNormals();
+	this->Object::init();
 	constants.x	= 1.0;
 	constants.y	= 0.00;//14;
 	constants.z	= 0.00000;//7;
@@ -27,7 +27,7 @@ PointLight::PointLight(float ambient, float diffuse, float specular, glm::vec3 c
 : Light(ambient, diffuse, specular, colour),
   Object({location.x, location.y, location.z}, {0}, {colour.r, colour.g, colour.b})
 {
-	generateFlatNormals();
+	this->Object::init();
 	constants = attenuation;
 	position = glm::vec4(location.x, location.y, location.z, 0.0f);		//this is a points
 }

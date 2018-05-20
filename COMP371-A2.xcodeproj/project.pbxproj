@@ -25,8 +25,8 @@
 		6E69ED8120AD169500A78ADC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E69ED8020AD169500A78ADC /* OpenGL.framework */; };
 		6E69ED8320AD16CB00A78ADC /* libGLEW.2.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E69ED8220AD16CB00A78ADC /* libGLEW.2.1.0.dylib */; };
 		6E69ED8520AD16E200A78ADC /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E69ED8420AD16E200A78ADC /* libglfw.3.2.dylib */; };
-		6E7546C620B0897200B47A01 /* objloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E7546C520B0897200B47A01 /* objloader.cpp */; };
 		6E8C2F0C20B0AD89009195E3 /* mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E8C2F0B20B0AD89009195E3 /* mesh.cpp */; };
+		6E8C2F2220B0DF18009195E3 /* objloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E8C2F2120B0DF18009195E3 /* objloader.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -87,10 +87,12 @@
 		6E69ED8020AD169500A78ADC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		6E69ED8220AD16CB00A78ADC /* libGLEW.2.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.1.0.dylib; path = ../../../../../../usr/local/Cellar/glew/2.1.0/lib/libGLEW.2.1.0.dylib; sourceTree = "<group>"; };
 		6E69ED8420AD16E200A78ADC /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = ../../../../../../usr/local/Cellar/glfw/3.2.1/lib/libglfw.3.2.dylib; sourceTree = "<group>"; };
-		6E7546C420B088FD00B47A01 /* objloader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = objloader.hpp; sourceTree = "<group>"; };
-		6E7546C520B0897200B47A01 /* objloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objloader.cpp; sourceTree = "<group>"; };
 		6E8C2F0A20B09ADF009195E3 /* mesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
 		6E8C2F0B20B0AD89009195E3 /* mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mesh.cpp; sourceTree = "<group>"; };
+		6E8C2F0E20B0D258009195E3 /* scene.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = scene.obj; sourceTree = "<group>"; };
+		6E8C2F0F20B0D258009195E3 /* teddy.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = teddy.obj; sourceTree = "<group>"; };
+		6E8C2F2020B0DF02009195E3 /* objloader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = objloader.hpp; sourceTree = "<group>"; };
+		6E8C2F2120B0DF18009195E3 /* objloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objloader.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,7 +145,7 @@
 		6E51DFA920AE264500EBAD83 /* functional */ = {
 			isa = PBXGroup;
 			children = (
-				6E7546C420B088FD00B47A01 /* objloader.hpp */,
+				6E8C2F2020B0DF02009195E3 /* objloader.hpp */,
 				6E51DFAA20AE264500EBAD83 /* camera.h */,
 				6E51DFAB20AE264500EBAD83 /* renderer.h */,
 				6E51DFAC20AE264500EBAD83 /* shaderProgram.h */,
@@ -204,7 +206,7 @@
 		6E51DFDC20AE271F00EBAD83 /* functional */ = {
 			isa = PBXGroup;
 			children = (
-				6E7546C520B0897200B47A01 /* objloader.cpp */,
+				6E8C2F2120B0DF18009195E3 /* objloader.cpp */,
 				6E51DFDD20AE271F00EBAD83 /* camera.cpp */,
 				6E51DFDE20AE271F00EBAD83 /* renderer.cpp */,
 				6E51DFDF20AE271F00EBAD83 /* shaderProgram.cpp */,
@@ -260,11 +262,22 @@
 		6E69ED2C20AD0E3500A78ADC /* COMP371-A2 */ = {
 			isa = PBXGroup;
 			children = (
+				6E8C2F0D20B0D258009195E3 /* objectfiles */,
 				6E51DFAF20AE264500EBAD83 /* shaders */,
 				6E51DF9A20AE264500EBAD83 /* include */,
 				6E51DFCD20AE271F00EBAD83 /* src */,
 			);
 			path = "COMP371-A2";
+			sourceTree = "<group>";
+		};
+		6E8C2F0D20B0D258009195E3 /* objectfiles */ = {
+			isa = PBXGroup;
+			children = (
+				6E8C2F0E20B0D258009195E3 /* scene.obj */,
+				6E8C2F0F20B0D258009195E3 /* teddy.obj */,
+			);
+			name = objectfiles;
+			path = include/objectfiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -323,7 +336,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E7546C620B0897200B47A01 /* objloader.cpp in Sources */,
+				6E8C2F2220B0DF18009195E3 /* objloader.cpp in Sources */,
 				6E51DFF320AE28A400EBAD83 /* heightMap.cpp in Sources */,
 				6E51DFF420AE28A400EBAD83 /* object.cpp in Sources */,
 				6E51DFF520AE28A400EBAD83 /* GLCompilationException.cpp in Sources */,

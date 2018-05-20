@@ -18,9 +18,10 @@
 
 //my libs
 #include "GLIOException.h"
+#include "mesh.h"
 
-//provided lib
-#include "objloader.hpp"
+//provided libs
+#include "objloader.hpp""
 
 //opengl libs
 #include "GL/glew.h"
@@ -66,13 +67,13 @@ class Object
 		}
 		virtual std::vector<GLuint> triangleIndex(void);
 		virtual std::vector<GLuint> pointIndex(void);
-		virtual void generateFlatNormals(void);
-		virtual void generateGouraudNormals(void);
-		virtual void generatePhongNormals(void);
 		virtual void init(void);
-	 
 	//loading the object from file
 		Object(const char* filepath);
+	private:
+		void generateFlatNormals(void);
+		void averageNormals(void);
+
 };
 
 
