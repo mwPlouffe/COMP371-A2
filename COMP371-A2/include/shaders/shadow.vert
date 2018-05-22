@@ -7,7 +7,7 @@ uniform mat4 model_matrix;
 uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
 
-out vec3 normal_vertex;
+smooth out vec3 normal_vertex;
 out vec3 position_vertex;
 out vec3 colour_vertex;
 

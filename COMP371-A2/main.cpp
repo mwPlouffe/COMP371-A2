@@ -14,12 +14,8 @@ int main(void)
 	ShaderProgram *ambient	= new ShaderProgram("./include/shaders/shadow.vert", "./include/shaders/shadow.frag");
 	Camera *camera			= new Camera (glm::vec3(0.0f,0.0f,-25.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	Renderer *renderer;
-	PointLight *light = new PointLight();
-	Object *test;
-
-	
-	
-	
+	Object *obj;
+	PointLight *light;
 	try
 	{
 		window->init();
@@ -30,16 +26,18 @@ int main(void)
 		
 		renderer = new Renderer(ambient->program());
 		renderer->init(window, camera);
-		
 		camera->init(ambient->program());
 		
+		light = new PointLight();
 		light->init(ambient->program());
 		
-		test = new Object("./include/objectfiles/teapot.obj");
-		//test->pointIndex();
-		test->uniformColour();
-		test->init();
-		
+		obj = new Object("./include/objectfiles/teddy.obj");
+		obj->init();
+		obj->uniformColour(glm::vec3(129.0/256, 70.0/256, 43.0/256));
+		obj->DRAW_MODE = GL_TRIANGLES;
+		renderer->bind(obj, GL_STATIC_DRAW, "teddy");
+		renderer->registerBroadcaster(camera);
+		renderer->registerBroadcaster(light);
 	}
 	catch(GLFWException &ex)
 	{
@@ -49,23 +47,17 @@ int main(void)
 	catch(GLException &ex)
 	{
 		std::cout << "ERROR: " << ex.what() << std::endl;
-		//return -1;
+		return -1;
 	}
-	renderer->bind(light, GL_STATIC_DRAW);
+	
 	glPointSize(24);
-	renderer->bind(test, GL_STATIC_DRAW);
-	GLuint vao = renderer->bindCube();
 	while (! window->closed())
 	{
 		renderer->clear();
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-		
-		renderer->drawElements(light->vao, GL_POINTS, light->indexSize());
-		renderer->drawElements(test->vao, GL_TRIANGLES, test->indexSize());
-		renderer->drawElements(vao, GL_TRIANGLES, 48);
+		renderer->draw();
 		renderer->transformModelMatrix( camera->updateModel(window->keyPressed) );
-		camera->broadcast();
-		light->broadcast();
+		renderer->broadcast();
 		renderer->update(window);
 		
 	}

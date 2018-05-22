@@ -20,18 +20,20 @@
 
 #include "window.h"
 #include "object.h"
+#include "broadcaster.h"
 
-class Camera
+class Camera : public Broadcaster
 {
 	glm::vec3 position, direction, orientation;
-	GLuint pos;
+	GLuint pos, debug_shadows;
+	bool debug;
 	public:
 		Camera(void);
 		Camera(glm::vec3 eye, glm::vec3 dir, glm::vec3 up);
 		Camera(glm::vec3 eye, glm::vec3 dir);
 		glm::mat4 updateModel(bool *keys);
 		glm::mat4 init(GLuint shaderID);
-		void broadcast(void);
+		virtual void broadcast(void);
 	private:
 		glm::mat4 zoom(glm::vec3 scale);
 		glm::mat4 strafe(glm::vec3 direction);

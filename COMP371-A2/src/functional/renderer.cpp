@@ -21,27 +21,34 @@ void Renderer::init(Window::Window *w, Camera *c)
 	modelFrameID = glGetUniformLocation(shaderID, "model_matrix");
 	viewFrameID = glGetUniformLocation(shaderID, "view_matrix");
 	perspectiveFrameID = glGetUniformLocation(shaderID, "projection_matrix");
-	debug_shadows = glGetUniformLocation(shaderID, "disable_shadows");
-	if (modelFrameID == -1 || viewFrameID == -1 || perspectiveFrameID == -1 || debug_shadows == -1)
+	if (modelFrameID == -1 || viewFrameID == -1 || perspectiveFrameID == -1)
 	{
 		throw GLException("Renderer::init -> Could not locate Shader attribute(s). Shaders are not correctly linked.");
 	}
+	//although this instance is a broadcaster, we can simply broadcast its data using its own broadcast method, no need to register it
+	
+	
 	setDepthTesting();
 	std::cout << "MESSAGE: Renderer initialised Successfully" << std::endl;
 }
-void Renderer::broadcastUniforms(bool shadows_enabled)
+void  Renderer::broadcast(void)
 {
+	//broadcast all the registered uniforms to the shader
+	//done for each class that can broadcast data
+	for (int i = 0; i < broadcasters.size(); i++)
+	{
+		broadcasters[i]->broadcast();
+	}
 	//broadcast (read re-load to the GPU) the new data to the shaders
 	glUniformMatrix4fv(modelFrameID, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	glUniformMatrix4fv(perspectiveFrameID, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
 	glUniformMatrix4fv(viewFrameID,1,GL_FALSE,glm::value_ptr(viewMatrix));
-	glUniform1i(debug_shadows, shadows_enabled);
 }
 void Renderer::update(Window *w)
 {
 	//render the contents stored in the buffer
 	//10 is the boolean value associated with the shadow debug key
-	broadcastUniforms(w->keyPressed[10]);
+	broadcast();
 
 	glfwSwapBuffers(w->glWindow());
 	
@@ -69,7 +76,7 @@ void Renderer::clearContext()
 	//unbinds any currently bound VAO
 	glBindVertexArray(0);
 }
-GLuint Renderer::bindSquare(void)
+void Renderer::bindSquare(void)
 {
 	
 	//hard-coded vertices to create a square from 3 triangles
@@ -96,11 +103,11 @@ GLuint Renderer::bindSquare(void)
 	};
 	Object *ret = new Object(vertices, indices, colours);
 	ret->init();
-	bind(ret, GL_STATIC_DRAW);
-	
-	return ret->vao;
+	ret->DRAW_MODE = GL_TRIANGLES;
+	bind(ret, GL_STATIC_DRAW, "square");
+	std::cout << "MESSAGE: Renderer::bindSquare Successful" << std::endl;
 }
-GLuint Renderer::bindCube(void)
+void Renderer::bindCube(void)
 {
 	std::cout << "MESSAGE: Renderer::bindCube Successfully" << std::endl;
 	std::vector<GLfloat> vertices =
@@ -154,11 +161,11 @@ GLuint Renderer::bindCube(void)
 	};
 	Object *ret = new Object(vertices, indices, colours);
 	ret->init();
-	bind(ret, GL_STATIC_DRAW);
+	ret->DRAW_MODE = GL_TRIANGLES;
+	bind(ret, GL_STATIC_DRAW, "cube");
 	std::cout << "MESSAGE: Renderer::bindCube Successful" << std::endl;
-	return ret->vao;
 }
-GLuint Renderer::bindAxis(void)
+void Renderer::bindAxis(void)
 {
 	std::vector <GLfloat> vertices =
 	{
@@ -185,9 +192,18 @@ GLuint Renderer::bindAxis(void)
 	
 	Object *ret = new Object(vertices, indices, colours);
 	ret->init();
-	bind(ret, GL_STATIC_DRAW);
+	ret->DRAW_MODE = GL_LINES;
+	bind(ret, GL_STATIC_DRAW, "axis");
 	std::cout << "MESSAGE: Renderer::bindAxis Successful\n\tYellow = +y-axis\n\tGreen  = +x-axis" << std::endl;
-	return ret->vao;
+}
+void Renderer::draw(void)
+{
+	std::map<std::string, Object*>::iterator i;
+	
+	for (i = objectList.begin(); i != objectList.end(); i++)
+	{
+		drawElements(i->second->vao, i->second->DRAW_MODE, i->second->indexSize());
+	}
 }
 void Renderer::drawArrays(GLuint vao, GLenum DRAW_TYPE, int vertexCount)
 {
@@ -203,7 +219,7 @@ void Renderer::drawElements(GLuint vao, GLenum DRAW_TYPE, int indexCount)
 	glDrawElements(DRAW_TYPE, indexCount, GL_UNSIGNED_INT, nullptr);
 	clearContext();
 }
-void Renderer::bind(Object *obj,GLenum DRAW_TYPE)
+void Renderer::bind(Object *obj,GLenum DRAW_TYPE, std::string identifier)
 {
 	//sends the data from a renderable object the the GPU
 	GLuint vao, vbo, ibo, nbo, cbo;
@@ -242,8 +258,9 @@ void Renderer::bind(Object *obj,GLenum DRAW_TYPE)
 	//instead of returning the vao, the object stores the vao its data is bound to
 	std::cout << "\tMESSAGE: Renderer::bind Successful" << std::endl;
 	obj->vao = vao;
+	objectList[identifier] = obj;
 }
-void Renderer::bindTexture(Object *obj, Texture *tex)
+void Renderer::bindTexture(std::string key, Texture *tex)
 {
 	//generate a vbo for the texture coordinates
 	//TODO
@@ -263,7 +280,11 @@ void Renderer::transformProjectionMatrix(glm::mat4 transform)
 	//transform the perspective matrix
 	perspectiveMatrix = transform * perspectiveMatrix;
 }
-
+void Renderer::registerBroadcaster(Broadcaster *b)
+{
+	broadcasters.push_back(b);
+	std::cout << "\tMESSAGE: Broadcaster Registered" << std::endl;
+}
 
 
 

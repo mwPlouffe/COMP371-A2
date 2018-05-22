@@ -19,7 +19,7 @@ Camera::Camera(glm::vec3 eye, glm::vec3 dir, glm::vec3 up)
 	position = eye;
 	direction = dir;
 	orientation = up;
-
+	debug = false;
 }
 Camera::Camera(glm::vec3 eye, glm::vec3 dir)
 {
@@ -31,6 +31,7 @@ glm::mat4 Camera::init(GLuint shaderID)
 {
 	//returns a view matrix for the camera
 	pos = glGetUniformLocation(shaderID,"camera_position");
+	debug_shadows = glGetUniformLocation(shaderID, "disable_shadows");
 	if (pos == -1)
 	{
 		throw GLException("Camera::init -> Could not locate Shader attribute(s). Shaders are not correctly linked.");
@@ -41,6 +42,7 @@ glm::mat4 Camera::init(GLuint shaderID)
 void Camera::broadcast(void)
 {
 	glUniform3fv(pos,1,glm::value_ptr(position));
+	glUniform1i(debug_shadows, debug);
 }
 glm::mat4 Camera::zoom(glm::vec3 scale)
 {
@@ -113,5 +115,7 @@ glm::mat4 Camera::updateModel(bool *keys)
 	{
 		//rotate left-right
 		transform = rotate(glm::vec3(0.0f,1.0f,0.0f)) * transform;
-	}	return transform;
+	}
+	debug = keys[10];
+	return transform;
 }

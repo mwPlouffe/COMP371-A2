@@ -42,18 +42,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6E31B2AD20B3946C00DEA213 /* broadcaster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = broadcaster.h; sourceTree = "<group>"; };
+		6E31B2AE20B3A69B00DEA213 /* heightMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = heightMap.h; sourceTree = "<group>"; };
+		6E31B2AF20B3A6A500DEA213 /* directionalLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = directionalLight.h; path = lights/directionalLight.h; sourceTree = "<group>"; };
+		6E31B2B020B3A6A500DEA213 /* light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = light.h; path = lights/light.h; sourceTree = "<group>"; };
+		6E31B2B120B3A6A500DEA213 /* pointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pointLight.h; path = lights/pointLight.h; sourceTree = "<group>"; };
+		6E31B2B220B3A6A500DEA213 /* spotLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spotLight.h; path = lights/spotLight.h; sourceTree = "<group>"; };
 		6E51DF7120AE21F000EBAD83 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = main.h; path = "COMP371-A2/main.h"; sourceTree = SOURCE_ROOT; };
 		6E51DF9B20AE264500EBAD83 /* CImg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CImg.h; sourceTree = "<group>"; };
-		6E51DF9D20AE264500EBAD83 /* directionalLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = directionalLight.h; sourceTree = "<group>"; };
-		6E51DF9F20AE264500EBAD83 /* light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = light.h; sourceTree = "<group>"; };
 		6E51DFA020AE264500EBAD83 /* object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
-		6E51DFA120AE264500EBAD83 /* pointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pointLight.h; sourceTree = "<group>"; };
-		6E51DFA220AE264500EBAD83 /* spotLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spotLight.h; sourceTree = "<group>"; };
 		6E51DFA420AE264500EBAD83 /* GLCompilationException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLCompilationException.h; sourceTree = "<group>"; };
 		6E51DFA520AE264500EBAD83 /* GLException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLException.h; sourceTree = "<group>"; };
 		6E51DFA620AE264500EBAD83 /* GLFWException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLFWException.h; sourceTree = "<group>"; };
 		6E51DFA720AE264500EBAD83 /* GLIOException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLIOException.h; sourceTree = "<group>"; };
-		6E51DFA820AE264500EBAD83 /* heightMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = heightMap.h; path = ../exceptions/heightMap.h; sourceTree = "<group>"; };
 		6E51DFAA20AE264500EBAD83 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
 		6E51DFAB20AE264500EBAD83 /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = renderer.h; sourceTree = "<group>"; };
 		6E51DFAC20AE264500EBAD83 /* shaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shaderProgram.h; sourceTree = "<group>"; };
@@ -93,6 +94,11 @@
 		6E8C2F0F20B0D258009195E3 /* teddy.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = teddy.obj; sourceTree = "<group>"; };
 		6E8C2F2020B0DF02009195E3 /* objloader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = objloader.hpp; sourceTree = "<group>"; };
 		6E8C2F2120B0DF18009195E3 /* objloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objloader.cpp; sourceTree = "<group>"; };
+		6EF5D14B20B105520014E290 /* cow.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cow.obj; sourceTree = "<group>"; };
+		6EF5D14C20B105520014E290 /* first.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = first.obj; sourceTree = "<group>"; };
+		6EF5D14D20B105520014E290 /* pumpkin.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pumpkin.obj; sourceTree = "<group>"; };
+		6EF5D14E20B105520014E290 /* teapot.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = teapot.obj; sourceTree = "<group>"; };
+		6EF5D14F20B105520014E290 /* teddy2.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = teddy2.obj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,8 +129,8 @@
 		6E51DF9C20AE264500EBAD83 /* entities */ = {
 			isa = PBXGroup;
 			children = (
+				6E31B2AE20B3A69B00DEA213 /* heightMap.h */,
 				6E51DFA020AE264500EBAD83 /* object.h */,
-				6E51DFA820AE264500EBAD83 /* heightMap.h */,
 				6E8C2F0A20B09ADF009195E3 /* mesh.h */,
 				6E51DFFF20AE2C9B00EBAD83 /* lights */,
 			);
@@ -151,6 +157,7 @@
 				6E51DFAC20AE264500EBAD83 /* shaderProgram.h */,
 				6E51DFAD20AE264500EBAD83 /* texture.h */,
 				6E51DFAE20AE264500EBAD83 /* window.h */,
+				6E31B2AD20B3946C00DEA213 /* broadcaster.h */,
 			);
 			path = functional;
 			sourceTree = "<group>";
@@ -207,11 +214,11 @@
 			isa = PBXGroup;
 			children = (
 				6E8C2F2120B0DF18009195E3 /* objloader.cpp */,
+				6E51DFDF20AE271F00EBAD83 /* shaderProgram.cpp */,
+				6E51DFE120AE271F00EBAD83 /* window.cpp */,
 				6E51DFDD20AE271F00EBAD83 /* camera.cpp */,
 				6E51DFDE20AE271F00EBAD83 /* renderer.cpp */,
-				6E51DFDF20AE271F00EBAD83 /* shaderProgram.cpp */,
 				6E51DFE020AE271F00EBAD83 /* texture.cpp */,
-				6E51DFE120AE271F00EBAD83 /* window.cpp */,
 			);
 			path = functional;
 			sourceTree = "<group>";
@@ -219,10 +226,10 @@
 		6E51DFFF20AE2C9B00EBAD83 /* lights */ = {
 			isa = PBXGroup;
 			children = (
-				6E51DF9F20AE264500EBAD83 /* light.h */,
-				6E51DF9D20AE264500EBAD83 /* directionalLight.h */,
-				6E51DFA120AE264500EBAD83 /* pointLight.h */,
-				6E51DFA220AE264500EBAD83 /* spotLight.h */,
+				6E31B2AF20B3A6A500DEA213 /* directionalLight.h */,
+				6E31B2B020B3A6A500DEA213 /* light.h */,
+				6E31B2B120B3A6A500DEA213 /* pointLight.h */,
+				6E31B2B220B3A6A500DEA213 /* spotLight.h */,
 			);
 			name = lights;
 			sourceTree = "<group>";
@@ -273,6 +280,11 @@
 		6E8C2F0D20B0D258009195E3 /* objectfiles */ = {
 			isa = PBXGroup;
 			children = (
+				6EF5D14B20B105520014E290 /* cow.obj */,
+				6EF5D14C20B105520014E290 /* first.obj */,
+				6EF5D14D20B105520014E290 /* pumpkin.obj */,
+				6EF5D14E20B105520014E290 /* teapot.obj */,
+				6EF5D14F20B105520014E290 /* teddy2.obj */,
 				6E8C2F0E20B0D258009195E3 /* scene.obj */,
 				6E8C2F0F20B0D258009195E3 /* teddy.obj */,
 			);

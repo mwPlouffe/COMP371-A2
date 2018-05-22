@@ -10,6 +10,8 @@
 #define renderer_h
 
 #include <vector>
+#include <map>
+#include <string>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -22,27 +24,36 @@
 #include "object.h"
 #include "camera.h"
 #include "texture.h"
+#include "broadcaster.h"
 
-class Renderer
+//function pointer for all the broadcast functions
+
+class Renderer : public Broadcaster
 {
 private:
-	GLuint modelFrameID, perspectiveFrameID, viewFrameID, shaderID, debug_shadows;
+	GLuint modelFrameID, perspectiveFrameID, viewFrameID, shaderID;
 	glm::mat4 viewMatrix, perspectiveMatrix, modelMatrix;
 	int contextWidth, contextHeight;
+	std::map<std::string, Object*> objectList;
+	std::vector<Broadcaster*> broadcasters;
 public:
 	std::vector<GLuint> vertexArrayBuffers;
 	Renderer(GLuint shader);
 	void init(Window::Window *w, Camera *c);
-	void broadcastUniforms(bool shadows_enabled);
+	
+	void registerBroadcaster(Broadcaster *b);
+	
+	virtual void broadcast(void);
 	void update(Window *w);
 	void clear(void) const;
 	
-	void bind(Object *obj,GLenum DRAW_TYPE);
-	GLuint bindSquare(void);
-	GLuint bindCube(void);
-	GLuint bindAxis(void);
-	void bindTexture(Object *obj, Texture *tex);
+	void bind(Object *obj,GLenum DRAW_TYPE, std::string identifier);
+	void bindSquare(void);
+	void bindCube(void);
+	void bindAxis(void);
+	void bindTexture(std::string key, Texture *tex);
 	
+	void draw(void);
 	void drawArrays(GLuint vao, GLenum DRAW_TYPE, int shapeCount);
 	void drawElements(GLuint vao, GLenum DRAW_TYPE, int indexCount);
 	
@@ -53,6 +64,7 @@ private:
 	void clearContext(void);
 	void setContextSize(Window::Window *w);
 	void setDepthTesting(void);
+	GLuint genShadowBuffer(void);
 	
 };
 

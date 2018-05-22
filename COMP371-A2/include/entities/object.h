@@ -39,6 +39,7 @@ class Object
 	GLuint tex;
 	public:
 		GLuint vao;
+		GLenum DRAW_MODE;
 		Object(void);
 		Object(std::vector<GLfloat> vertexList);
 		Object(std::vector<GLfloat> vertexList,std::vector<GLuint> indexList);
@@ -48,7 +49,7 @@ class Object
 		std::vector<GLfloat> normalList(void);
 		std::vector<GLfloat> colourList(void);
 		void normalColourise(void);
-		void uniformColour(void);
+		void uniformColour(glm::vec3 colour);
 		inline int indexSize(void)
 		{
 			return indices.size();
@@ -70,8 +71,9 @@ class Object
 		virtual void init(void);
 	//loading the object from file
 		Object(const char* filepath);
-	private:
+	protected:
 		void generateFlatNormals(void);
+	private:
 		void averageNormals(void);
 
 };

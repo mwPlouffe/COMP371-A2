@@ -13,7 +13,18 @@
 
 HeightMap::HeightMap(void) : Object()
 {
-	//intentionally left empty
+	//generate a generic, flat, height map!
+	width = DEFAULT_WIDTH;
+	height = DEFAULT_HEIGHT;
+	for (int x = -1 * width/2; x < width/2; x++)
+	{
+		for (int z = -1 * height/2 ; z < height/2; z++)
+		{
+			vertices.push_back(x);
+			vertices.push_back(-5.0f);
+			vertices.push_back(z);
+		}
+	}
 }
 HeightMap::HeightMap(std::vector<GLfloat> vertices, int w, int h)
 :Object(vertices)
@@ -67,4 +78,5 @@ std::vector<GLuint>HeightMap::pointIndex(void)
 void HeightMap::init(void)
 {
 	triangleIndex();
+	Object::generateFlatNormals();
 }

@@ -35,12 +35,12 @@ void Mesh::init(std::vector<GLfloat> vertexList, std::vector<GLuint> indices, st
 	//place all the vertices inside a face (the faces are triangles, so it is done in groups of 3)
 	for (int i = 0; i < indices.size(); i+=3)
 	{
-		
 		Face *f = new Face();
 		//add the vertices by the index referred to by the indices std::vector
 		f->a = vertices[indices[i	 ]];
 		f->b = vertices[indices[i + 1]];
 		f->c = vertices[indices[i + 2]];
+		
 		//each vertex was given the face normal originally, copy that into the face
 		f->fnorm = glm::vec3(flatNormals[indices[i	  ]],
 							 flatNormals[indices[i + 1]],
@@ -62,9 +62,11 @@ void Mesh::init(std::vector<GLfloat> vertexList, std::vector<GLuint> indices, st
 	
 	for (int i = 0; i < vertices.size(); i++)
 	{
-		normals.push_back( vertices[ i ]->normal.x );
-		normals.push_back( vertices[ i ]->normal.y );
-		normals.push_back( vertices[ i ]->normal.z );
+		//normalise before passing it on
+		glm::normalize(vertices[i]->normal);
+		normals.push_back( vertices[ i ]->normal.x);
+		normals.push_back( vertices[ i ]->normal.y);
+		normals.push_back( vertices[ i ]->normal.z);
 	}
 	
 	//we now have our average vertex normals

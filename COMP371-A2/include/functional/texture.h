@@ -24,7 +24,9 @@ class Texture
 	public:
 		GLuint tex;
 		Texture(const char* fp, GLenum DIMS, GLenum COL);
+		Texture(GLenum DIMS, GLenum COL);
 		void init(void);
+		void initShadowTexture(void);
 	
 	private:
 		bool load(void);
@@ -33,6 +35,7 @@ class Texture
 		std::vector<GLfloat> coordinates;
 		GLenum DIM_TYPE;
 		GLenum COL_TYPE;
+		bool isShadowMap;
 };
 
 

@@ -35,7 +35,7 @@ bool loadOBJ(const char * path, std::vector<GLfloat> &out_vertices, std::vector<
 			
 			if (matches != 3)
 			{
-				throw GLIOException("ERROR: Malformed File. Exiting");
+				throw GLIOException("Malformed File. Ill-formed vertices Exiting");
 			}
 
 			out_vertices.push_back(vertex.x);
@@ -52,7 +52,7 @@ bool loadOBJ(const char * path, std::vector<GLfloat> &out_vertices, std::vector<
 
 			if (matches != 3)
 			{
-				throw GLIOException("ERROR: Malformed File. Exiting");
+				throw GLIOException("Malformed File, ill-formed indices found. Exiting");
 			}
 
 			out_indices.push_back(idx1 - 1); //why -1? hint: look at the first index in teddy.obj
@@ -69,7 +69,7 @@ bool loadOBJ(const char * path, std::vector<GLfloat> &out_vertices, std::vector<
 			
 			if (matches != 3)
 			{
-				throw GLIOException("ERROR: Malformed File. Exiting");
+				throw GLIOException("Malformed File ill-formed normals. Exiting");
 			}
 			
 			out_normals.push_back(idx1 );

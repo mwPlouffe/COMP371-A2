@@ -21,6 +21,7 @@
 #include "renderer.h"
 #include "camera.h"
 #include "object.h"
+#include "heightMap.h"
 #include "directionalLight.h"
 #include "pointLight.h"
 

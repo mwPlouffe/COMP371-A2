@@ -126,13 +126,13 @@ Object::Object(const char* filepath)
 	//TODO implement the colours and whatnot for the object!
 		loadOBJ(filepath, vertices, indices, normals);
 }
-void Object::uniformColour(void)
+void Object::uniformColour(glm::vec3 colour)
 {
 	for (int i = 0; i < vertices.size() ; i+=3)
 	{
-		colours.push_back(1.0f);
-		colours.push_back(0.0f);
-		colours.push_back(1.0f);
+		colours.push_back(colour.r);
+		colours.push_back(colour.g);
+		colours.push_back(colour.b);
 	}
 }
 void Object::averageNormals(void)

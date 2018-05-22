@@ -2,8 +2,9 @@
 
 //info from the renderer, about the object being rendered
 in vec3 position_vertex;
-in vec3 normal_vertex;
 in vec3 colour_vertex;
+smooth in vec3 normal_vertex;
+
 
 //debug flag from the renderer
 uniform bool disable_shadows;
@@ -41,37 +42,42 @@ vec3 specular;
 float attn;
 float distance;
 
+//unit normal of the interpolated vertex normals
+vec3 norm;
+
 //temporary variable that allows for distinguishing between point and directional lights
 vec3 position_light3;
 
 void main()
 {
+	//extract the position into a vec3 according to type of light
 	if (position_light.w < 0.9f)
 	{
 		//is a position
 		position_light3 = vec3(position_light.x, position_light.y, position_light.z);
+		lightdir = normalize(position_light3 - position_vertex);
 	}
 	else
 	{
 		//is a vector
 		position_light3 =normalize(-1.0 * vec3(position_light.x, position_light.y, position_light.z) );
+		lightdir = normalize(-1.0 * position_light3);
 	}
-	
-	//extract the position into a vec3
-	
+	//the normal of the surface is being interpolated, need to renormalise to ensure it is a unit normal
+	norm = normalize(normal_vertex);
 	
 	//add the colour to the ambient lighting
 	ambient = ambient_light * colour_light;
 	
 	//calculate the diffuse lighting effects
-	lightdir = normalize(position_light3 - position_vertex);
+	
 	diff	 = max ( dot(normal_vertex, lightdir), 0);
 	diffuse  = diff * colour_light * diffuse_light;
 	
 	//calculate the specular lighting effects
 	viewdir		= normalize(camera_position - position_vertex);
-	reflectdir	= reflect(-1*lightdir, normal_vertex);
-	spec		= pow( max( dot(viewdir, reflectdir), 0.0), 8);
+	reflectdir	= reflect(-1*lightdir, norm);
+	spec		= pow( max( dot(viewdir, reflectdir), 0.0), 64);
 	specular	= specular_light * spec * colour_light;
 	
 	
