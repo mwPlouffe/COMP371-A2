@@ -24,7 +24,6 @@ class ShaderProgram
 	char* fragCode;
 	GLuint vertID;
 	GLuint fragID;
-	public:
 	GLuint programID;
 
 	//constructors
@@ -44,7 +43,7 @@ class ShaderProgram
 	void disable();
 	inline GLuint program()
 	{ 
-	return (programID != NULL) ? programID : GL_FALSE;
+	return (programID != -1) ? programID : GL_FALSE;
 	};
 	//helpers and utilities
 	private:

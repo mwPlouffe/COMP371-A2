@@ -70,6 +70,7 @@ void Window::windowData()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); 
 	
 	//the window is not resizable as a result, don't even try
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);

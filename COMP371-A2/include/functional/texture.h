@@ -24,18 +24,17 @@ class Texture
 	public:
 		GLuint tex;
 		Texture(const char* fp, GLenum DIMS, GLenum COL);
-		Texture(GLenum DIMS, GLenum COL);
-		void init(void);
-		void initShadowTexture(void);
+		virtual void init(void);
 	
 	private:
 		bool load(void);
 		cimg_library::CImg<unsigned char> texture;
 		const char* texturePath;
 		std::vector<GLfloat> coordinates;
+	protected:
+		Texture(GLenum DIMS, GLenum COL);
 		GLenum DIM_TYPE;
 		GLenum COL_TYPE;
-		bool isShadowMap;
 };
 
 

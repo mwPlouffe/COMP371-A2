@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E31B2B520B3AC4700DEA213 /* shadowMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E31B2B420B3AC4700DEA213 /* shadowMap.cpp */; };
 		6E51DFF320AE28A400EBAD83 /* heightMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DFCF20AE271F00EBAD83 /* heightMap.cpp */; };
 		6E51DFF420AE28A400EBAD83 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DFD020AE271F00EBAD83 /* object.cpp */; };
 		6E51DFF520AE28A400EBAD83 /* GLCompilationException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E51DFD820AE271F00EBAD83 /* GLCompilationException.cpp */; };
@@ -48,6 +49,10 @@
 		6E31B2B020B3A6A500DEA213 /* light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = light.h; path = lights/light.h; sourceTree = "<group>"; };
 		6E31B2B120B3A6A500DEA213 /* pointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pointLight.h; path = lights/pointLight.h; sourceTree = "<group>"; };
 		6E31B2B220B3A6A500DEA213 /* spotLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spotLight.h; path = lights/spotLight.h; sourceTree = "<group>"; };
+		6E31B2B320B3AB4200DEA213 /* shadowMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shadowMap.h; sourceTree = "<group>"; };
+		6E31B2B420B3AC4700DEA213 /* shadowMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shadowMap.cpp; sourceTree = "<group>"; };
+		6E31B2B620B3C2B700DEA213 /* shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shadow.vert; sourceTree = "<group>"; };
+		6E31B2B720B3C37400DEA213 /* shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shadow.frag; sourceTree = "<group>"; };
 		6E51DF7120AE21F000EBAD83 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = main.h; path = "COMP371-A2/main.h"; sourceTree = SOURCE_ROOT; };
 		6E51DF9B20AE264500EBAD83 /* CImg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CImg.h; sourceTree = "<group>"; };
 		6E51DFA020AE264500EBAD83 /* object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
@@ -79,8 +84,8 @@
 		6E51DFE120AE271F00EBAD83 /* window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = window.cpp; sourceTree = "<group>"; };
 		6E51E00020AE328300EBAD83 /* debug.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = debug.frag; sourceTree = "<group>"; };
 		6E51E00220AE4B6B00EBAD83 /* light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = light.cpp; path = lights/light.cpp; sourceTree = "<group>"; };
-		6E51E00520AE54AF00EBAD83 /* shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shadow.frag; sourceTree = "<group>"; };
-		6E51E00620AE553700EBAD83 /* shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shadow.vert; sourceTree = "<group>"; };
+		6E51E00520AE54AF00EBAD83 /* light.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = light.frag; sourceTree = "<group>"; };
+		6E51E00620AE553700EBAD83 /* light.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = light.vert; sourceTree = "<group>"; };
 		6E51E00720AE6F6900EBAD83 /* directionalLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = directionalLight.cpp; path = lights/directionalLight.cpp; sourceTree = "<group>"; };
 		6E51E00920AE820000EBAD83 /* pointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pointLight.cpp; path = lights/pointLight.cpp; sourceTree = "<group>"; };
 		6E69ED2A20AD0E3500A78ADC /* COMP371-A2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "COMP371-A2"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,6 +161,7 @@
 				6E51DFAB20AE264500EBAD83 /* renderer.h */,
 				6E51DFAC20AE264500EBAD83 /* shaderProgram.h */,
 				6E51DFAD20AE264500EBAD83 /* texture.h */,
+				6E31B2B320B3AB4200DEA213 /* shadowMap.h */,
 				6E51DFAE20AE264500EBAD83 /* window.h */,
 				6E31B2AD20B3946C00DEA213 /* broadcaster.h */,
 			);
@@ -171,8 +177,10 @@
 				6E51DFBA20AE264500EBAD83 /* shader_height.frag */,
 				6E51E00020AE328300EBAD83 /* debug.frag */,
 				6E51DFB920AE264500EBAD83 /* debug.vert */,
-				6E51E00520AE54AF00EBAD83 /* shadow.frag */,
-				6E51E00620AE553700EBAD83 /* shadow.vert */,
+				6E51E00520AE54AF00EBAD83 /* light.frag */,
+				6E51E00620AE553700EBAD83 /* light.vert */,
+				6E31B2B620B3C2B700DEA213 /* shadow.vert */,
+				6E31B2B720B3C37400DEA213 /* shadow.frag */,
 			);
 			name = shaders;
 			path = include/shaders;
@@ -219,6 +227,7 @@
 				6E51DFDD20AE271F00EBAD83 /* camera.cpp */,
 				6E51DFDE20AE271F00EBAD83 /* renderer.cpp */,
 				6E51DFE020AE271F00EBAD83 /* texture.cpp */,
+				6E31B2B420B3AC4700DEA213 /* shadowMap.cpp */,
 			);
 			path = functional;
 			sourceTree = "<group>";
@@ -350,6 +359,7 @@
 			files = (
 				6E8C2F2220B0DF18009195E3 /* objloader.cpp in Sources */,
 				6E51DFF320AE28A400EBAD83 /* heightMap.cpp in Sources */,
+				6E31B2B520B3AC4700DEA213 /* shadowMap.cpp in Sources */,
 				6E51DFF420AE28A400EBAD83 /* object.cpp in Sources */,
 				6E51DFF520AE28A400EBAD83 /* GLCompilationException.cpp in Sources */,
 				6E8C2F0C20B0AD89009195E3 /* mesh.cpp in Sources */,

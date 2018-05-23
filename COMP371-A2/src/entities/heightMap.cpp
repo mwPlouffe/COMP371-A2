@@ -21,7 +21,7 @@ HeightMap::HeightMap(void) : Object()
 		for (int z = -1 * height/2 ; z < height/2; z++)
 		{
 			vertices.push_back(x);
-			vertices.push_back(-5.0f);
+			vertices.push_back(DEFAULT_DEPTH);
 			vertices.push_back(z);
 		}
 	}

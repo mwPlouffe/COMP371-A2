@@ -36,7 +36,7 @@ glm::mat4 Camera::init(GLuint shaderID)
 	{
 		throw GLException("Camera::init -> Could not locate Shader attribute(s). Shaders are not correctly linked.");
 	}
-	
+	std::cout << "MESSAGE: Camera::init Successful" << std::endl;
 	return glm::lookAt(position, direction, orientation);
 }
 void Camera::broadcast(void)

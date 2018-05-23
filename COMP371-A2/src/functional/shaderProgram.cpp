@@ -113,8 +113,8 @@ char* ShaderProgram::load(char* path)
 	if (fp == NULL)
 	{
 		std::stringstream err;
-		err <<"File not found at the specififed path\nPath: ";
-		err << path;
+		err <<"ERROR: File not found at the specififed path\n\t\tPath: \"";
+		err << path << "\"";
 		std::cout << err.str() << std::endl;
 		throw *new GLIOException();
 	}
@@ -128,8 +128,8 @@ char* ShaderProgram::load(char* path)
 	if (0 != fseek(fp,0,SEEK_SET) || bytes < 1)
 	{
 		std::stringstream err;
-		err << "File at the specififed path could not be read, or is empty\nPath: ";
-		err << path;
+		err << "ERROR: File at the specififed path could not be read, or is empty\n\t\tPath: \"";
+		err << path << "\"";
 		std::cout << err.str() << std::endl;
 		throw GLIOException();
 	}

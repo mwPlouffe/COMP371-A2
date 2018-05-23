@@ -34,6 +34,7 @@ class Light : public Broadcaster
 		Light(float ambient, float diffuse, float specular, glm::vec3 colour);
 		virtual void broadcast(void);
 		virtual void init(GLuint shaderID);
+		
 	
 };
 

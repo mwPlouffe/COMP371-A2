@@ -11,33 +11,48 @@
 int main(void)
 {
 	Window *window			= new Window("COMP371: Assignment 2: 27532733", 800, 800);
-	ShaderProgram *ambient	= new ShaderProgram("./include/shaders/shadow.vert", "./include/shaders/shadow.frag");
+	ShaderProgram *ambient	= new ShaderProgram("./include/shaders/light.vert", "./include/shaders/light.frag");
+	ShaderProgram *shadows  = new ShaderProgram("./include/shaders/shadow.vert", "./include/shaders/shadow.frag");
 	Camera *camera			= new Camera (glm::vec3(0.0f,0.0f,-25.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	Renderer *renderer;
 	Object *obj;
 	PointLight *light;
+	HeightMap *map;
+	
 	try
 	{
 		window->init();
 		window->registerCallbacks();
 		
+		//do not enable the shadowing shader, it will **** **** up 
+		shadows->init();
 		ambient->init();
 		ambient->enable();
 		
-		renderer = new Renderer(ambient->program());
+		renderer = new Renderer(ambient->program(),shadows->program());
 		renderer->init(window, camera);
-		camera->init(ambient->program());
 		
 		light = new PointLight();
 		light->init(ambient->program());
+		light->DRAW_MODE = GL_POINTS;
 		
 		obj = new Object("./include/objectfiles/teddy.obj");
 		obj->init();
 		obj->uniformColour(glm::vec3(129.0/256, 70.0/256, 43.0/256));
 		obj->DRAW_MODE = GL_TRIANGLES;
+		
+		map = new HeightMap();
+		map->init();
+		map->uniformColour(glm::vec3(87.0/256, 96.0/256, 109.0/256));
+		map->DRAW_MODE = GL_TRIANGLES;
+		
 		renderer->bind(obj, GL_STATIC_DRAW, "teddy");
-		renderer->registerBroadcaster(camera);
-		renderer->registerBroadcaster(light);
+		//renderer->bind(light, GL_STATIC_DRAW, "light");
+		renderer->bind(map, GL_STATIC_DRAW, "floor");
+		//renderer->bindAxis();
+		
+		renderer->registerBroadcaster(camera, "camera");
+		renderer->registerBroadcaster(light, "light");
 	}
 	catch(GLFWException &ex)
 	{
@@ -53,11 +68,9 @@ int main(void)
 	glPointSize(24);
 	while (! window->closed())
 	{
-		renderer->clear();
-		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-		renderer->draw();
+		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 		renderer->transformModelMatrix( camera->updateModel(window->keyPressed) );
-		renderer->broadcast();
+		renderer->render();
 		renderer->update(window);
 		
 	}

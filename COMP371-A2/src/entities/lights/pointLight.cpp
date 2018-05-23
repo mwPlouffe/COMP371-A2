@@ -15,8 +15,8 @@ Object({0.0f, 30.0f, 0.0f}, {0}, {colourLight.r, colourLight.g, colourLight.b})
 	glm::vec3 location(0.0f, 30.0f, 0.0f);
 	//http://wiki.ogre3d.org/-Point+Light+Attenuation
 	//location where constants were taken from
-	//provides 0% light at 600 units
-	position = glm::vec4(0.0f, 50.0f, 0.0f, 0.0f);			//this is a point
+	//modified to work best with the teddy
+	position = glm::vec4(location.x,location.y,location.z, 0.0f);			//this is a point
 	location  = glm::normalize(location);
 	
 	this->normals.push_back(location.x);

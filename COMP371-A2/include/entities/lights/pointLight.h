@@ -26,6 +26,10 @@ class PointLight : public Light, public Object
 		virtual void broadcast(void);
 		virtual void init(GLuint shaderID);
 		void move(glm::vec3 transform);
+	inline glm::vec3 location(void)
+	{
+		return glm::vec3(position.x, position.y, position.z);
+	}
 };
 
 

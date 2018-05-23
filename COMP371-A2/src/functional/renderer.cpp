@@ -3,9 +3,10 @@
 //this class renders by Object or by vao
 //it is the "driving force" behind this assignment
 
-Renderer::Renderer(GLuint shader)
+Renderer::Renderer(GLuint shader, GLuint shadowShader)
 {
 	shaderID = shader;
+	shadowShaderID = shadowShader;
 }
 void Renderer::init(Window::Window *w, Camera *c)
 {
@@ -35,9 +36,10 @@ void  Renderer::broadcast(void)
 {
 	//broadcast all the registered uniforms to the shader
 	//done for each class that can broadcast data
-	for (int i = 0; i < broadcasters.size(); i++)
+	std::map<std::string, Broadcaster*>::iterator i;
+	for (i = broadcasters.begin(); i != broadcasters.end(); i++)
 	{
-		broadcasters[i]->broadcast();
+		i->second->broadcast();
 	}
 	//broadcast (read re-load to the GPU) the new data to the shaders
 	glUniformMatrix4fv(modelFrameID, 1, GL_FALSE, glm::value_ptr(modelMatrix));
@@ -221,6 +223,11 @@ void Renderer::drawElements(GLuint vao, GLenum DRAW_TYPE, int indexCount)
 }
 void Renderer::bind(Object *obj,GLenum DRAW_TYPE, std::string identifier)
 {
+	if (objectList.find(identifier) != objectList.end())
+	{
+		std::cout << "WARNING: Non-unique identifier \"" << identifier << "\". This could result in unusual behaviour" << std::endl;
+	}
+
 	//sends the data from a renderable object the the GPU
 	GLuint vao, vbo, ibo, nbo, cbo;
 	
@@ -259,6 +266,7 @@ void Renderer::bind(Object *obj,GLenum DRAW_TYPE, std::string identifier)
 	std::cout << "\tMESSAGE: Renderer::bind Successful" << std::endl;
 	obj->vao = vao;
 	objectList[identifier] = obj;
+	std::cout << "\tMESSAGE: Object \"" << identifier << "\" Registered Successfully" << std::endl;
 }
 void Renderer::bindTexture(std::string key, Texture *tex)
 {
@@ -280,10 +288,111 @@ void Renderer::transformProjectionMatrix(glm::mat4 transform)
 	//transform the perspective matrix
 	perspectiveMatrix = transform * perspectiveMatrix;
 }
-void Renderer::registerBroadcaster(Broadcaster *b)
+void Renderer::registerBroadcaster(Broadcaster *b, std::string identifier)
 {
-	broadcasters.push_back(b);
-	std::cout << "\tMESSAGE: Broadcaster Registered" << std::endl;
+	
+	if (broadcasters.find(identifier) != broadcasters.end())
+	{
+		std::cout << "WARNING: Non-unique identifier \"" << identifier << "\". This could result in unusual behaviour" << std::endl;
+	}
+	
+	broadcasters[identifier] = b;
+	std::cout << "\tMESSAGE: Broadcaster Registered \"" << identifier << "\"" << std::endl;
+}
+ShadowMap& Renderer::genShadowMap(void)
+{
+	GLuint dfbo;
+	glGenFramebuffers(1, &dfbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, dfbo);
+	//create the shadow map and bind it to the frame buffer
+	ShadowMap *sm = new ShadowMap(GL_TEXTURE_2D, GL_DEPTH_COMPONENT, SHADOW_BUFFER_WIDTH, SHADOW_BUFFER_HEIGHT);
+	sm->init(dfbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, dfbo);
+	//now set the viewport to the size of the texture
+	glViewport(0, 0, SHADOW_BUFFER_WIDTH, SHADOW_BUFFER_HEIGHT);
+	
+	//now let's generate that depth map
+	
+	glClear(GL_DEPTH_BUFFER_BIT);
+	
+	//we need a special broadcast method here for the light-modelspace-transform
+	
+	//we need to get the light from the 
+	PointLight *light;
+	if ( broadcasters.find("light") == broadcasters.end())
+	{
+		std::cout << "WARNING: No lights found, cannot generate shadows" <<std::endl;
+		return *sm;
+	}
+	
+	glUseProgram(shadowShaderID);
+	light = dynamic_cast<PointLight*>(broadcasters.find("light")->second);
+	
+	GLuint lightViewID, lightProjectionID, lightModelID;
+	
+	lightViewID = glGetUniformLocation(shadowShaderID,"light_view_matrix");
+	lightProjectionID = glGetUniformLocation(shadowShaderID, "light_projection_matrix");
+	lightModelID = glGetUniformLocation(shadowShaderID, "light_model_matrix");
+	
+	if (lightViewID == -1 || lightProjectionID == -1 || lightModelID == -1)
+	{
+		throw GLException("ERROR: There was an unexpected problem initialising the shadowing shader matrices");
+	}
+	
+	glUniformMatrix4fv(lightViewID, 1, GL_FALSE,
+					   glm::value_ptr(glm::lookAt(light->location(), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,1.0f))));
+	
+	glUniformMatrix4fv(lightProjectionID, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
+	
+	
+	glUniformMatrix4fv(lightModelID, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, dfbo);
+	glBindTexture(GL_TEXTURE_2D, sm->tex);
+	this->draw();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
+	glDeleteFramebuffers(GL_FRAMEBUFFER, &dfbo);
+	return *sm;
+	
+	//memory leak in here caused by continually generating new shadowmaps and frame buffers for the GPU to deal with
+}
+void Renderer::render(void)
+{
+	ShadowMap map = genShadowMap();
+	glViewport(0, 0, contextWidth, contextHeight);
+	this->clear();
+	glUseProgram(shaderID);
+	broadcast();
+	glBindTexture(GL_TEXTURE_2D, map.tex);
+	GLuint tex = glGetUniformLocation(shaderID, "shadow_map");
+	GLuint lightViewID = glGetUniformLocation(shaderID,"light_view_matrix");
+	GLuint lightProjectionID = glGetUniformLocation(shaderID, "light_projection_matrix");
+	
+	if (tex == -1 || lightProjectionID == -1 || lightViewID == -1)
+	{
+		//throw GLException("ERROR: The shadow Map could not be found in the shaders. Exiting");
+		std::cout << "ERROR: The shadow Map could not be found in the shaders."  << std::endl;
+	}
+	PointLight *light;
+	if ( broadcasters.find("light") == broadcasters.end())
+	{
+		std::cout << "WARNING: No lights found, cannot generate shadows" <<std::endl;
+		return;
+	}
+	light = dynamic_cast<PointLight*>(broadcasters.find("light")->second);
+	
+	glUniform1i(tex,map.tex);
+	glm::mat4 lightViewMat = glm::lookAt(light->location(), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,1.0f));
+	
+	glUniformMatrix4fv(lightViewID, 1, GL_FALSE,
+					   glm::value_ptr(lightViewMat));
+	
+	glUniformMatrix4fv(lightProjectionID, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
+	draw();
+	glDeleteTextures(1, &(map.tex));
+	
+	//memory leak in here caused by not deleting the textures after completion
 }
 
 
