@@ -2,6 +2,8 @@
 #define GLFW_EXCEPTION_H
 #include <exception>
 
+//this should really only be thrown once per run of the program, when the window attempts to instantiate glfw
+
 class GLFWException : public std::exception
 {
 	protected:

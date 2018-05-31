@@ -19,6 +19,9 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
+//not currently supporte in the engine
+//used as a base for the shadow map
+
 class Texture
 {
 	public:

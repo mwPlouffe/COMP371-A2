@@ -9,6 +9,9 @@
 #ifndef broadcaster_h
 #define broadcaster_h
 
+//pure virtual class
+//allows any child to be interated over so that shader uniform data can be broadcast
+
 class Broadcaster
 {
 	public:

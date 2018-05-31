@@ -10,14 +10,28 @@
 #define shadowMap_h
 
 #include "texture.h"
+#include "broadcaster.h"
+#include "glm/glm.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtc/type_ptr.hpp"
+
+//used to track the texture and framebuffer that is attached to it (implemented to get around a memory leak)
+//also broadcasts the uniforms to the shaders before rendering the map
 
 class ShadowMap : public Texture
 {
 	int width, height;
+	GLuint targetShaderID;
+	GLuint lightViewID, lightProjectionID, lightModelID, shadowBiasID;
+	float bias;
+	void registerUniforms(void);
 	public:
 		ShadowMap(GLenum DIMS, GLenum COLORS, int w, int h);
-		virtual void init(GLuint dfbo);
-	
+		void updateBias(float value);
+		virtual void init(void);
+		virtual void broadcast(glm::mat4 lightViewMat, glm::mat4 lightProjectionMat, glm::mat4 lighModelMat);
+		void setTargetShader(GLuint shaderID);
+		GLuint depthBuffer;
 };
 
 

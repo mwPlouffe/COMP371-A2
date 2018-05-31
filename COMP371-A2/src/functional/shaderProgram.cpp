@@ -74,7 +74,7 @@ void ShaderProgram::attach(GLuint shaderID, GLuint progID)
 	{
 		glGetProgramInfoLog(progID, sizeof(log), NULL, log);
 		std::stringstream err;
-		err <<"Shaders could not be linked to the program\n";
+		err <<"ERROR:Shaders could not be linked to the program\n";
 		err << log;
 		std::cout << err.str() << std::endl;
 		throw GLException();

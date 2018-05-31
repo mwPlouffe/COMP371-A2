@@ -1,8 +1,8 @@
 #version 330 core
 
-in float depth;
-
 void main()
 {
-	gl_FragDepth = depth;
+	//intentionally empty
+	//this NEEDS TO STAY EMPTY
+	//F***ING WITH THE DEPTH BUFFER PRODUCES INCREDIBLY BAD THINGS, DO NOT EVER TOUCH THIS
 }

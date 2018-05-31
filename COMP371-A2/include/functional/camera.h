@@ -21,8 +21,13 @@
 #include "window.h"
 #include "object.h"
 #include "broadcaster.h"
+#include "controlAuthority.h"
 
-class Camera : public Broadcaster
+//the camera of the engine
+//tracks the position and state of the view of the scene
+//TODO have this class broadcast the view matrix to the shaders as required.
+
+class Camera : public Broadcaster, public ControlAuthority
 {
 	glm::vec3 position, direction, orientation;
 	GLuint pos, debug_shadows;
@@ -31,13 +36,12 @@ class Camera : public Broadcaster
 		Camera(void);
 		Camera(glm::vec3 eye, glm::vec3 dir, glm::vec3 up);
 		Camera(glm::vec3 eye, glm::vec3 dir);
-		glm::mat4 updateModel(bool *keys);
+		virtual glm::mat4 update(bool *keys);
 		glm::mat4 init(GLuint shaderID);
 		virtual void broadcast(void);
-	private:
-		glm::mat4 zoom(glm::vec3 scale);
-		glm::mat4 strafe(glm::vec3 direction);
-		glm::mat4 rotate(glm::vec3 orientation);
+	protected:
+		virtual void strafe(glm::vec3 direction);
+		virtual void rotate(glm::vec3 orientation);
 };
 
 

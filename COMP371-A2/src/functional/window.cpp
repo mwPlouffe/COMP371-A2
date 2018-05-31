@@ -1,4 +1,4 @@
-#include "window.h"
+	#include "window.h"
 
 bool Window::keyPressed[MAX_KEYS];
 

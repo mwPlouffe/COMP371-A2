@@ -80,3 +80,25 @@ void HeightMap::init(void)
 	triangleIndex();
 	Object::generateFlatNormals();
 }
+void HeightMap::orientNormals(glm::vec3 direction)
+{
+	for (int i = 0 ; i < normals.size(); i+=3)
+	{
+		if (direction.x != 0)
+		{
+			normals[i] *= direction.x;
+		}
+		if (direction.y != 0)
+		{
+			normals[i + 1] *= direction.y;
+		}
+		if (direction.z != 0)
+		{
+			normals[i + 2] *= direction.z;
+		}
+		//std::cout << "(" << normals[i] << ", " << normals[i + 1] << ", " << normals[i + 2] << ")" << "\t(" << i/3 << ")" << std::endl;
+	}
+}
+
+
+

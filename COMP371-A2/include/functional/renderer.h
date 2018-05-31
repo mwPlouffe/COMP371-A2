@@ -27,9 +27,14 @@
 #include "broadcaster.h"
 #include "shadowMap.h"
 #include "pointLight.h"
+#include "directionalLight.h"
 
 #define SHADOW_BUFFER_WIDTH		1024
 #define SHADOW_BUFFER_HEIGHT	1024
+
+//heart and soul of the engine
+//keeps track of the MVP state, shaders, meshes and broadcasters
+//renders or draws meshes to screen, updates scree etc..
 
 class Renderer : public Broadcaster
 {
@@ -39,8 +44,8 @@ private:
 	int contextWidth, contextHeight;
 	std::map<std::string, Object*> objectList;
 	std::map<std::string, Broadcaster*> broadcasters;
+	ShadowMap *shadowMap;
 public:
-	std::vector<GLuint> vertexArrayBuffers;
 	Renderer(GLuint shader, GLuint shadowShader);
 	void init(Window::Window *w, Camera *c);
 	
@@ -55,20 +60,24 @@ public:
 	void bindCube(void);
 	void bindAxis(void);
 	void bindTexture(std::string key, Texture *tex);
+	Object findObject(std::string identifier);
 	
-	void draw(void);
+	void draw(GLuint shaderID);
 	void drawArrays(GLuint vao, GLenum DRAW_TYPE, int shapeCount);
 	void drawElements(GLuint vao, GLenum DRAW_TYPE, int indexCount);
 	void render(void);
+	void updateBias(float value);
 	
 	void transformViewMatrix(glm::mat4 transform);
 	void transformModelMatrix(glm::mat4 transform);
 	void transformProjectionMatrix(glm::mat4 transform);
+	
 private:
 	void clearContext(void);
 	void setContextSize(Window::Window *w);
 	void setDepthTesting(void);
-	ShadowMap& genShadowMap(void);
+	void genShadowMap(void);
+	std::vector<glm::vec3> frustrumPoints(void);
 	
 };
 

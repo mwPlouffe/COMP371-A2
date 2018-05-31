@@ -10,6 +10,10 @@
 
 #define MAX_KEYS 13
 
+//used to initialise the GLFW, GLEW and OPENGL libraries
+//holds the callback functions and data
+//also tracks the viewport size
+
 class Window
 {
 	//members

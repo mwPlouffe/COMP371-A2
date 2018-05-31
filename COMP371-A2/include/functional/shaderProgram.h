@@ -12,10 +12,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+
+//used for loading, linking, compiling the shaders
+//frees memory on successful completion of tasks
 class ShaderProgram
 {
-	//badness occurring here from duplication - refactor at some point	
-
 	//private members
 	private:
 	char* vertPath;

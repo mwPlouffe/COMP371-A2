@@ -3,6 +3,9 @@
 
 #include <exception>
 
+//throw this when there is an OpenGL problem that is beyond the scope of the programmer to have fixed
+//typically silent shader linker errors, unregistered uniforms, and the like
+
 class GLException : public std::exception
 {
 	//members

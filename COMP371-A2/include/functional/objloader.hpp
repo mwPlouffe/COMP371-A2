@@ -13,9 +13,7 @@
 
 //modified from the COMP371 tutorial 3 code to work with current project
 //			--bad IO throws exception
-//			--supports colours
 //			--supports normals
-//			--supports textures
 
 bool loadOBJ(
 	const char * path, 

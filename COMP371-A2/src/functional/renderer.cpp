@@ -7,6 +7,10 @@ Renderer::Renderer(GLuint shader, GLuint shadowShader)
 {
 	shaderID = shader;
 	shadowShaderID = shadowShader;
+	
+	//creates a constant framebuffer and texture reference, in place of constantly updating and deleting the framebuffer and textures
+	shadowMap = new ShadowMap(GL_TEXTURE_2D, GL_DEPTH_COMPONENT, SHADOW_BUFFER_WIDTH, SHADOW_BUFFER_HEIGHT);
+	shadowMap->init();
 }
 void Renderer::init(Window::Window *w, Camera *c)
 {
@@ -14,7 +18,7 @@ void Renderer::init(Window::Window *w, Camera *c)
 	//set the view, model, and projection matrices
 	setContextSize(w);
 	viewMatrix = c->init(this->shaderID);
-	perspectiveMatrix = glm::perspective(glm::radians(45.0f), (GLfloat)contextWidth / (GLfloat)contextHeight, 0.1f, 500.0f);
+	perspectiveMatrix = glm::perspective(glm::radians(45.0f), (GLfloat)contextWidth / (GLfloat)contextHeight, 0.1f, 1000.0f);
 	
 	modelMatrix = glm::scale(glm::mat4(), glm::vec3(1.0f));
 	
@@ -171,10 +175,10 @@ void Renderer::bindAxis(void)
 {
 	std::vector <GLfloat> vertices =
 	{
-			-3.0f, 4.0f, -3.0f,
-			-2.0f, 4.0f, -3.0f,
-			-3.0f, 5.0f, -3.0f,
-			-3.0f, 4.0f, -2.0f
+			-13.0f, 4.0f, -13.0f,
+			-12.0f, 4.0f, -13.0f,
+			-13.0f, 5.0f, -13.0f,
+			-13.0f, 4.0f, -12.0f
 	};
 	//render as edges specifically
 	std::vector<GLuint> indices =
@@ -198,13 +202,15 @@ void Renderer::bindAxis(void)
 	bind(ret, GL_STATIC_DRAW, "axis");
 	std::cout << "MESSAGE: Renderer::bindAxis Successful\n\tYellow = +y-axis\n\tGreen  = +x-axis" << std::endl;
 }
-void Renderer::draw(void)
+void Renderer::draw(GLuint shaderID)
 {
 	std::map<std::string, Object*>::iterator i;
 	
 	for (i = objectList.begin(); i != objectList.end(); i++)
 	{
-		drawElements(i->second->vao, i->second->DRAW_MODE, i->second->indexSize());
+		i->second->registerToShader(shaderID);
+		i->second->broadcast();//updates the model matrix for the given object
+		drawElements(i->second->vao, i->second->DRAW_MODE, i->second->indexSize());//draws the object to screen
 	}
 }
 void Renderer::drawArrays(GLuint vao, GLenum DRAW_TYPE, int vertexCount)
@@ -276,7 +282,7 @@ void Renderer::bindTexture(std::string key, Texture *tex)
 void Renderer::transformViewMatrix(glm::mat4 transform)
 {
 	//transform the view matrix
-	viewMatrix = transform * viewMatrix;
+	viewMatrix = transform;
 }
 void Renderer::transformModelMatrix(glm::mat4 transform)
 {
@@ -299,102 +305,126 @@ void Renderer::registerBroadcaster(Broadcaster *b, std::string identifier)
 	broadcasters[identifier] = b;
 	std::cout << "\tMESSAGE: Broadcaster Registered \"" << identifier << "\"" << std::endl;
 }
-ShadowMap& Renderer::genShadowMap(void)
+void Renderer::genShadowMap(void)
 {
-	GLuint dfbo;
-	glGenFramebuffers(1, &dfbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, dfbo);
-	//create the shadow map and bind it to the frame buffer
-	ShadowMap *sm = new ShadowMap(GL_TEXTURE_2D, GL_DEPTH_COMPONENT, SHADOW_BUFFER_WIDTH, SHADOW_BUFFER_HEIGHT);
-	sm->init(dfbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, dfbo);
 	//now set the viewport to the size of the texture
 	glViewport(0, 0, SHADOW_BUFFER_WIDTH, SHADOW_BUFFER_HEIGHT);
 	
-	//now let's generate that depth map
+	//make the shadow map's framebuffer current
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowMap->depthBuffer);
 	
+	//now let's generate that depth map
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	//we need a special broadcast method here for the light-modelspace-transform
 	
 	//we need to get the light from the 
-	PointLight *light;
-	if ( broadcasters.find("light") == broadcasters.end())
-	{
-		std::cout << "WARNING: No lights found, cannot generate shadows" <<std::endl;
-		return *sm;
-	}
-	
-	glUseProgram(shadowShaderID);
-	light = dynamic_cast<PointLight*>(broadcasters.find("light")->second);
-	
-	GLuint lightViewID, lightProjectionID, lightModelID;
-	
-	lightViewID = glGetUniformLocation(shadowShaderID,"light_view_matrix");
-	lightProjectionID = glGetUniformLocation(shadowShaderID, "light_projection_matrix");
-	lightModelID = glGetUniformLocation(shadowShaderID, "light_model_matrix");
-	
-	if (lightViewID == -1 || lightProjectionID == -1 || lightModelID == -1)
-	{
-		throw GLException("ERROR: There was an unexpected problem initialising the shadowing shader matrices");
-	}
-	
-	glUniformMatrix4fv(lightViewID, 1, GL_FALSE,
-					   glm::value_ptr(glm::lookAt(light->location(), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,1.0f))));
-	
-	glUniformMatrix4fv(lightProjectionID, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
-	
-	
-	glUniformMatrix4fv(lightModelID, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	
-	glBindFramebuffer(GL_FRAMEBUFFER, dfbo);
-	glBindTexture(GL_TEXTURE_2D, sm->tex);
-	this->draw();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER,0);
-	glDeleteFramebuffers(GL_FRAMEBUFFER, &dfbo);
-	return *sm;
-	
-	//memory leak in here caused by continually generating new shadowmaps and frame buffers for the GPU to deal with
-}
-void Renderer::render(void)
-{
-	ShadowMap map = genShadowMap();
-	glViewport(0, 0, contextWidth, contextHeight);
-	this->clear();
-	glUseProgram(shaderID);
-	broadcast();
-	glBindTexture(GL_TEXTURE_2D, map.tex);
-	GLuint tex = glGetUniformLocation(shaderID, "shadow_map");
-	GLuint lightViewID = glGetUniformLocation(shaderID,"light_view_matrix");
-	GLuint lightProjectionID = glGetUniformLocation(shaderID, "light_projection_matrix");
-	
-	if (tex == -1 || lightProjectionID == -1 || lightViewID == -1)
-	{
-		//throw GLException("ERROR: The shadow Map could not be found in the shaders. Exiting");
-		std::cout << "ERROR: The shadow Map could not be found in the shaders."  << std::endl;
-	}
-	PointLight *light;
+	Light *light;
 	if ( broadcasters.find("light") == broadcasters.end())
 	{
 		std::cout << "WARNING: No lights found, cannot generate shadows" <<std::endl;
 		return;
 	}
-	light = dynamic_cast<PointLight*>(broadcasters.find("light")->second);
-	
-	glUniform1i(tex,map.tex);
-	glm::mat4 lightViewMat = glm::lookAt(light->location(), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,1.0f));
-	
-	glUniformMatrix4fv(lightViewID, 1, GL_FALSE,
-					   glm::value_ptr(lightViewMat));
-	
-	glUniformMatrix4fv(lightProjectionID, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
-	draw();
-	glDeleteTextures(1, &(map.tex));
-	
-	//memory leak in here caused by not deleting the textures after completion
+	light = dynamic_cast<Light*>(broadcasters.find("light")->second);
+	//the renderer should use the shadow shader for this
+	glUseProgram(shadowShaderID);
+	//tell the shadowmap which shader to use
+	shadowMap->setTargetShader(shadowShaderID);
+	this->broadcast();
+	shadowMap->broadcast(light->viewMatrix(), light->projectionMatrix(), modelMatrix);
+	this->draw(shadowShaderID);
+	glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
+void Renderer::render(void)
+{
+	//create the shadow map
+	this->genShadowMap();
+	//reset the viewport before rendering
+	glViewport(0, 0, contextWidth, contextHeight);
+	this->clear();
+	
+	//reset the shader
+	glUseProgram(shaderID);
+	
+	//set the shadow map to the light shader
+	shadowMap->setTargetShader(shaderID);
+	
+	//sufficient to point the sampler to our texture
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, shadowMap->tex);
+	//send the sampler data to the shader
+	GLuint sampler = glGetUniformLocation(shaderID, "shadow_map");
+	
+	if (sampler == -1)
+	{
+		std::cout << "could not send sampler data to shader" << std::endl;
+	}
+	glUniform1i(sampler, 0);
+	
+	
+	//TODO support changes between directional and point lights, only directional are supported here
+	Light *light;
+	if ( broadcasters.find("light") == broadcasters.end())
+	{
+		std::cout << "WARNING: No lights found, cannot generate shadows" <<std::endl;
+	}
+	light = dynamic_cast<Light*>(broadcasters.find("light")->second);
 
+	//generate the light space matrices
+	
+	shadowMap->broadcast(light->viewMatrix(), light->projectionMatrix(), modelMatrix);
+	broadcast();
+	glClearColor(0.1f, 0.1f, 1.0f, 1.0f);
+	//glEnable(GL_CULL_FACE);
+	draw(shaderID);
+	//glCullFace(GL_BACK);
+	//glDisable(GL_CULL_FACE);
+	glDeleteSamplers(1, &sampler);
+	
+}
+std::vector<glm::vec3>  Renderer::frustrumPoints(void)
+{
+	//cardinal view volume points
+	std::vector<glm::vec3> ret =
+	{
+		glm::vec3(-1.0f),
+		glm::vec3(-1.0f,-1.0f,1.0f),
+		glm::vec3(1.0f,-1.0f,1-.0f),
+		glm::vec3(1.0f,-1.0f,1.0f),
+		glm::vec3(-1.0f,1.0f,-1.0f),
+		glm::vec3(-1.0f,1.0f,1.0f),
+		glm::vec3(1.0f,1.0f,-1.0f),
+		glm::vec3(1.0f),
+	};
+
+	//transform them with the projection matrix
+	//renormalise with w
+	for (int i = 0; i < ret.size(); i++)
+	{
+		glm::vec4 tmp = glm::vec4(ret[i],1.0f);
+		tmp = perspectiveMatrix * viewMatrix * tmp;
+		tmp = tmp /tmp.w;
+		ret[i] = glm::vec3(tmp.x, tmp.y, tmp.z);
+	}
+	return ret;
+}
+void Renderer::updateBias(float value)
+{
+	shadowMap->updateBias(value);
+}
+Object Renderer::findObject(std::string identifier)
+{
+	if ( objectList.find(identifier) == objectList.end())
+	{
+		std::cout << "WARNING: Could not find the object with identifier: " << identifier <<std::endl;
+		return nullptr;
+	}
+	else
+	{
+		return  *(objectList.find(identifier)->second);
+	}
+
+}
 
 
 

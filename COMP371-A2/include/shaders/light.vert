@@ -9,12 +9,12 @@ uniform mat4 projection_matrix;
 
 uniform mat4 light_view_matrix;
 uniform mat4 light_projection_matrix;
-uniform mat4 light_model_matrix;
+//uniform mat4 light_model_matrix;		//not needed
 
 smooth out vec3 normal_vertex;
 out vec3 position_vertex;
 out vec3 colour_vertex;
-out vec4 lightspace_position;
+smooth out vec4 lightspace_position;
 
 void main()
 {
@@ -26,7 +26,7 @@ void main()
 	
 	//pass the vertex location and colour data forward
 	//ensure the position data is oriented correctly in the scene
-	position_vertex = vec3 (model_matrix * vec4(position, 1.0f));
+	position_vertex = vec3(model_matrix * vec4(position, 1.0f));
 	colour_vertex	= colour;
 	
 	//pass the light-space matrix forward to the fragment shader

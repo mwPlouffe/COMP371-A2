@@ -44,78 +44,23 @@ void Camera::broadcast(void)
 	glUniform3fv(pos,1,glm::value_ptr(position));
 	glUniform1i(debug_shadows, debug);
 }
-glm::mat4 Camera::zoom(glm::vec3 scale)
-{
-	//TODO implement a zoom functionality
-	return glm::mat4();
-}
-glm::mat4 Camera::strafe(glm::vec3 direction)
+void Camera::strafe(glm::vec3 direction)
 {
 	//generate a translation matrix for the provided direction
-	return glm::translate(glm::mat4(), direction);
+	position+=direction;
+	this->direction+=direction;
 }
-glm::mat4 Camera::rotate(glm::vec3 orientation)
+void Camera::rotate(glm::vec3 orientation)
 {
 	//generate a rotation matrix for the provided direction of rotation
-	return glm::rotate(glm::mat4(), glm::radians(1.0f), orientation);
+	direction+=orientation;
 }
-glm::mat4 Camera::updateModel(bool *keys)
+glm::mat4 Camera::update(bool *keys)
 {
 	//this function gathers all the model transforms into one matrix
 	//based upon the states provided by the window
 	//returns the transformation matrix for use by the renderer
-	
-	glm::mat4 transform;
-	if (keys[0] == true)
-	{
-		//up
-		transform = strafe( glm::vec3(0.0f,-0.1f,0.0f)) * transform;
-	}
-	if (keys[1] == true)
-	{
-		//down
-		transform = strafe( glm::vec3(0.0f,0.1f,0.0f) ) * transform;
-	}
-	if (keys[2] == true)
-	{
-		//left
-		transform = strafe(glm::vec3(-0.1f,0.0f,0.0f)) * transform;
-	}
-	if (keys[3] == true)
-	{
-		//right
-		transform = strafe(glm::vec3(0.1f,0.0f,0.0f)) * transform;
-	}
-	if (keys[4] == true)
-	{
-		//zoom in
-		transform = strafe(glm::vec3(0.0f,0.0f,0.1f)) * transform;
-	}
-	if (keys[5] == true)
-	{
-		//zoom out
-		transform = strafe(glm::vec3(0.0f,0.0f,-0.1f)) * transform;
-	}
-	if (keys[6] == true)
-	{
-		//rotate down-up
-		transform = rotate(glm::vec3(1.0f,0.0f,0.0f)) * transform;
-	}
-	if (keys[7] == true)
-	{
-		//rotate right-left
-		transform = rotate(glm::vec3(0.0f,-1.0f,0.0f)) * transform;
-	}
-	if (keys[8] == true)
-	{
-		//rotate up-down
-		transform = rotate(glm::vec3(-1.0f,0.0f,0.0f)) * transform;
-	}
-	if (keys[9] == true)
-	{
-		//rotate left-right
-		transform = rotate(glm::vec3(0.0f,1.0f,0.0f)) * transform;
-	}
+	this->ControlAuthority::update(keys);
 	debug = keys[10];
-	return transform;
+	return glm::lookAt(position,direction, orientation);
 }

@@ -15,6 +15,10 @@
 #define DEFAULT_WIDTH  400
 #define DEFAULT_DEPTH  -25
 
+//Height map class from assignment 1
+//best used for generating floors and walls in the scene
+//inherits several behaviours from the parent class object
+
 class HeightMap : public Object
 {
 	int width, height;
@@ -25,5 +29,7 @@ class HeightMap : public Object
 	virtual std::vector<GLuint>triangleIndex(void);
 	virtual std::vector<GLuint>pointIndex(void);
 	virtual void init(void);
+	void orientNormals(glm::vec3 direction);
+	
 };
 #endif /* heightMap_h */

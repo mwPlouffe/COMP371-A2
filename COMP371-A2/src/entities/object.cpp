@@ -15,21 +15,25 @@
 Object::Object(void)
 {
 	//intentionally empty
+	modelMatrix = glm::mat4();
 }
 Object::Object(std::vector<GLfloat> vertexList)
 {
 	vertices = vertexList;
+	modelMatrix = glm::mat4();
 }
 Object::Object(std::vector<GLfloat> vertexList,std::vector<GLuint> indexList)
 {
 	vertices = vertexList;
 	indices = indexList;
+	modelMatrix = glm::mat4();
 }
 Object::Object(std::vector<GLfloat> vertexList,std::vector<GLuint> indexList, std::vector<GLfloat> colourList)
 {
 	vertices = vertexList;
 	indices	 = indexList;
 	colours	 = colourList;
+	modelMatrix = glm::mat4();
 }
 Object::Object(std::vector<GLfloat> vertexList,std::vector<GLuint> indexList, std::vector<GLfloat> normalList, std::vector<GLfloat> colourList)
 {
@@ -37,6 +41,7 @@ Object::Object(std::vector<GLfloat> vertexList,std::vector<GLuint> indexList, st
 	indices	 = indexList;
 	normals  = normalList;
 	colours	 = colourList;
+	modelMatrix = glm::mat4();
 }
 std::vector<GLfloat> Object::vertexList(void)
 {
@@ -100,6 +105,7 @@ void Object::generateFlatNormals(void)
 		int va = indices[i];
 		int vb = indices[i + 1];
 		int vc = indices[i + 2];
+		//std::cout << "Triangle: " << i/3 << " (" << va << ", " << vb << ", " << vc << ")" << std::endl;
 		
 		//each index refers to the first float of a vertex (3 floats per vertex)
 		//need to multiply each index by 3 to get vertex index
@@ -107,12 +113,22 @@ void Object::generateFlatNormals(void)
 		vb *= 3;
 		vc *= 3;
 		
+//		std::cout << "Vertex Data Start Locations: " << i/3 << " (" << va << ", " << vb << ", " << vc << ")" << std::endl;
+//		std::cout << "Vertex Data: " << i     << " (" << vertices[va + 0] << ", " << vertices[va + 1] << ", " << vertices[va + 2] << ")" << std::endl;
+//		std::cout << "Vertex Data: " << i + 1 << " (" << vertices[vb + 0] << ", " << vertices[vb + 1] << ", " << vertices[vb + 2] << ")" << std::endl;
+//		std::cout << "Vertex Data: " << i + 2 << " (" << vertices[vc + 0] << ", " << vertices[vc + 1] << ", " << vertices[vc + 2] << ")" << std::endl;
+		
 		//create the vectors
-		glm::vec3 ab(vertices[va] - vertices[vb], vertices[va+1] - vertices[vb+1],vertices[va + 2] - vertices[vb + 2]);
-		glm::vec3 ca(vertices[vc] - vertices[va], vertices[vc+1] - vertices[va+1],vertices[vc + 2] - vertices[va + 2]);
+		glm::vec3 ba(vertices[vb] - vertices[va], vertices[vb+1] - vertices[va+1], vertices[vb + 2] - vertices[va + 2]);
+		glm::vec3 ca(vertices[vc] - vertices[va], vertices[vc+1] - vertices[va+1], vertices[vc + 2] - vertices[va + 2]);
+	
+		//std::cout << "Vector BA: (" << ba.x << ", " << ba.y << ". " << ba.z << ") " << std::endl;
+		//std::cout << "Vector CA: (" << ca.x << ", " << ca.y << ". " << ca.z << ") " << std::endl;
 		
 		//generate the normal for the triangle (leave this unnormalised)
-		glm::vec3 norm = ( glm::cross(ab, ca) );
+		glm::vec3 norm = glm::normalize(( glm::cross(ba, ca) ));
+		
+		//std::cout << "Face Normal: (" << norm.x << ", " << norm.y << ". " << norm.z << ") " << std::endl << std::endl;
 		
 		//push the float values of the normal into the std::vector
 		normals.push_back(norm.x);
@@ -138,10 +154,29 @@ void Object::uniformColour(glm::vec3 colour)
 void Object::averageNormals(void)
 {
 	//generate a poorly named "mesh" to generate the vertex normals
-	Mesh *m = new Mesh(vertices, indices, normals);
+	MeshGenerator *m = new MeshGenerator(vertices, indices, normals);
+	this->normals = std::vector<GLfloat>();
 	this->normals = m->average_normals();
+	free(m);
 }
-
+void Object::registerToShader(GLuint shaderID)
+{
+	modelMatrixID = glGetUniformLocation(shaderID,"model_matrix");
+	
+	if (modelMatrixID == -1)
+	{
+		//throw GLException("ERROR: Could not find the model matrix in the shader for an object");
+		//this is not unusual, since it could be trying to send data that does not exist
+	}
+}
+void Object::broadcast(void)
+{
+	glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+}
+void Object::move(glm::mat4 transformationMat)
+{
+	modelMatrix = transformationMat * modelMatrix;
+}
 
 
 
